@@ -882,8 +882,8 @@ function submitOrder() {
   msg += `Theme: ${selectedTheme}\n`;
   if (design)       msg += `Design Idea: ${design}\n`;
   if (colour)       msg += `Colour Preference: ${colour}\n`;
-  if (reflink)       msg += `Reference Image: ${reflink}\n`;
-  if (refImageName) msg += `Reference Image: ${refImageName} (sending on WhatsApp)\n`;
+  if (link)       msg += `Reference Image: ${link}\n`;
+  // if (refImageName) msg += `Reference Image: ${refImageName} (sending on WhatsApp)\n`;
   msg += `\n`;
 
   if (allergies) msg += `ALLERGIES / INSTRUCTIONS\n${allergies}\n\n`;
