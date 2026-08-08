@@ -441,7 +441,7 @@ footer ul a:hover{color:#F5A623}
       </div>
   <div class="field">
         <label>Provide Pinterest link for reference image</label>
-        <input type="text" id="colourPref" placeholder="https://in.pinterest.com/" oninput="updateSummary()">
+        <input type="text" id="reflink" placeholder="https://in.pinterest.com/" oninput="updateSummary()">
       </div>
 
       <!-- REFERENCE IMAGE UPLOAD -->
@@ -809,6 +809,7 @@ function submitOrder() {
   const date     = dateVal ? new Date(dateVal).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
   const design   = document.getElementById('designDesc').value;
   const colour   = document.getElementById('colourPref').value;
+  const link     = document.getElementById('reflink').value;
   const name     = document.getElementById('custName').value;
   const phone    = document.getElementById('custPhone').value;
   const address  = document.getElementById('custAddress').value;
