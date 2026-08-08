@@ -504,9 +504,9 @@ footer ul a:hover{color:#F5A623}
           <button type="button" onclick="getMyLocation()" style="display:flex;align-items:center;gap:6px;background:var(--green-pale);border:1.5px solid rgba(59,110,42,.3);color:var(--green);padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s">
             📍 Use My Current Location
           </button>
-          <a href="https://maps.google.com" target="_blank" style="display:flex;align-items:center;gap:6px;background:var(--honey-pale);border:1.5px solid rgba(212,120,10,.3);color:var(--honey);padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s">
+          <!-- <a href="https://maps.google.com" target="_blank" style="display:flex;align-items:center;gap:6px;background:var(--honey-pale);border:1.5px solid rgba(212,120,10,.3);color:var(--honey);padding:8px 14px;border-radius:50px;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s">
             🗺️ Pick on Google Maps
-          </a>
+          </a> -->
         </div>
         <div id="locationStatus" style="font-size:12px;color:var(--green);margin-top:6px;display:none"></div>
       </div>
@@ -882,6 +882,7 @@ function submitOrder() {
   msg += `Theme: ${selectedTheme}\n`;
   if (design)       msg += `Design Idea: ${design}\n`;
   if (colour)       msg += `Colour Preference: ${colour}\n`;
+  if (reflink)       msg += `Reference Image: ${reflink}\n`;
   if (refImageName) msg += `Reference Image: ${refImageName} (sending on WhatsApp)\n`;
   msg += `\n`;
 
