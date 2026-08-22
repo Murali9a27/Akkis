@@ -249,12 +249,62 @@ footer ul a:hover{color:var(--honey-light)}
 .cart-overlay.show{opacity:1;pointer-events:all}
 
 /* CHECKOUT MODAL */
-.co-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:16px}
+.co-modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
 .co-modal-wrap.open{display:flex}
-.co-modal{background:#fff;border-radius:20px;padding:28px 24px;max-width:420px;width:100%;max-height:92vh;overflow-y:auto;position:relative}
-.co-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);line-height:1}
+.co-modal{background:#fff;border-radius:20px;padding:0;max-width:480px;width:100%;margin:auto;overflow:hidden;position:relative}
+.co-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:rgba(255,255,255,.8);line-height:1;z-index:1}
 .co-modal h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown-dark);margin-bottom:4px}
 .co-modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px}
+/* Modal head */
+.co-modal-head{background:linear-gradient(135deg,#3B1F0A,#7A4010);padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
+.co-modal-head h3{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:600;margin:0}
+/* Modal body */
+.co-modal-body{padding:20px 22px;max-height:82vh;overflow-y:auto}
+/* Section labels */
+.co-sec-label{font-size:11px;font-weight:700;color:var(--honey);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.co-section{margin-bottom:18px}
+/* Fields */
+.co-field{margin-bottom:12px}
+.co-field label{display:block;font-size:12px;font-weight:600;color:var(--brown-dark);margin-bottom:5px}
+.co-field input,.co-field textarea,.co-field select{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s}
+.co-field input:focus,.co-field textarea:focus,.co-field select:focus{border-color:var(--honey)}
+.co-field input.err{border-color:#C0392B}
+.co-err{font-size:11px;color:#C0392B;margin-top:3px;display:none}
+.co-err.show{display:block}
+.co-field textarea{resize:vertical;min-height:60px}
+.co-field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Location chips */
+.co-loc-chips{display:flex;gap:8px}
+.co-loc-chip{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:11px 8px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream)}
+.co-loc-chip:hover{border-color:var(--honey)}
+.co-loc-chip.selected{background:var(--honey-pale);border-color:var(--honey)}
+.co-loc-chip-icon{font-size:20px;margin-bottom:3px}
+.co-loc-chip-label{font-size:12px;font-weight:600;color:var(--brown-dark)}
+.co-loc-chip-sub{font-size:10px;color:var(--text-muted)}
+/* Delivery type */
+.co-del-chips{display:flex;gap:8px}
+.co-del-chip{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream)}
+.co-del-chip:hover{border-color:var(--honey)}
+.co-del-chip.selected{background:var(--honey-pale);border-color:var(--honey)}
+.co-del-chip-label{font-size:12px;font-weight:600;color:var(--brown-dark)}
+.co-del-chip-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+/* Info boxes */
+.co-info{border-radius:10px;padding:10px 13px;font-size:12px;line-height:1.6;margin-top:8px}
+.co-info.green{background:var(--green-pale);border:1px solid rgba(59,110,42,.2);color:var(--green)}
+.co-info.honey{background:var(--honey-pale);border:1px solid rgba(212,120,10,.2);color:var(--brown-mid)}
+/* Summary */
+.co-summary{background:var(--honey-pale);border-radius:12px;padding:13px 15px;margin-bottom:14px}
+.co-summary-title{font-weight:700;color:var(--honey);font-size:13px;margin-bottom:8px}
+.co-summary-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:4px}
+.co-summary-divider{border:none;border-top:1px solid var(--border);margin:7px 0}
+.co-summary-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--brown-dark)}
+/* Send btn */
+.co-send-btn{width:100%;background:#25D366;color:#fff;border:none;cursor:pointer;padding:14px;border-radius:50px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s}
+.co-send-btn:hover{background:#1ebe5d}
+/* Location btn */
+.co-loc-btn{display:flex;align-items:center;gap:6px;background:var(--green-pale);border:1.5px solid rgba(59,110,42,.3);color:var(--green);padding:7px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:7px;transition:all .2s}
+.co-loc-btn:hover{background:var(--green);color:#fff}
+@media(max-width:600px){.co-field-row{grid-template-columns:1fr}.co-modal-body{padding:16px 14px}.co-loc-chips,.co-del-chips{flex-direction:column}}
 .co-field{margin-bottom:13px}
 .co-field label{display:block;font-size:12px;font-weight:600;color:var(--brown-dark);margin-bottom:5px}
 .co-field input,.co-field textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s}
@@ -589,45 +639,147 @@ footer ul a:hover{color:var(--honey-light)}
   </div>
 </div>
 
-<!-- CHECKOUT POPUP MODAL -->
+<!-- CHECKOUT MODAL -->
 <div class="co-modal-wrap" id="coModalWrap">
   <div class="co-modal">
-    <button class="co-modal-close" onclick="closeCheckoutModal()">✕</button>
-    <div style="font-size:28px;margin-bottom:8px">📦</div>
-    <h3>Almost done!</h3>
-    <p class="co-modal-sub">Enter your details — your order will go directly on WhatsApp</p>
+    <div class="co-modal-head">
+      <h3>Complete Your Order</h3>
+      <button class="co-modal-close" onclick="closeCheckoutModal()">✕</button>
+    </div>
+    <div class="co-modal-body">
 
-    <div class="co-field">
-      <label>Your Name <span style="color:#C0392B">*</span></label>
-      <input type="text" id="coName" placeholder="Full name">
-      <div class="co-err" id="err-coName">Please enter your name</div>
-    </div>
-    <div class="co-field">
-      <label>WhatsApp Number <span style="color:#C0392B">*</span></label>
-      <input type="tel" id="coPhone" placeholder="+91 9876543210">
-      <div class="co-err" id="err-coPhone">Please enter your phone number</div>
-    </div>
-    <div class="co-field">
-      <label>Delivery Address <span style="color:#C0392B">*</span></label>
-      <textarea id="coAddress" placeholder="Flat No, Building, Area, Pune — Pincode"></textarea>
-      <div class="co-err" id="err-coAddress">Please enter your delivery address</div>
-    </div>
+      <!-- 1. DELIVERY LOCATION -->
+      <div class="co-section">
+        <div class="co-sec-label">Delivery Location</div>
+        <div class="co-loc-chips">
+          <div class="co-loc-chip selected" id="locPune" onclick="coSelectLoc('pune')">
+            <div class="co-loc-chip-icon">🏙️</div>
+            <div class="co-loc-chip-label">Pune / Local</div>
+            <div class="co-loc-chip-sub">In-city delivery</div>
+          </div>
+          <div class="co-loc-chip" id="locMH" onclick="coSelectLoc('mh')">
+            <div class="co-loc-chip-icon">📦</div>
+            <div class="co-loc-chip-label">Maharashtra</div>
+            <div class="co-loc-chip-sub">Cookies only — courier</div>
+          </div>
+        </div>
+      </div>
 
-    <!-- ORDER SUMMARY -->
-    <div class="co-summary">
-      <div class="co-summary-title">Order Summary</div>
-      <div id="coItems"></div>
-      <div class="co-summary-total"><span>Item Total</span><span id="coTotal">₹0</span></div>
-    </div>
+      <!-- 2. DELIVERY TYPE (Pune only) -->
+      <div class="co-section" id="coSecDelType">
+        <div class="co-sec-label">Delivery Type</div>
+        <div class="co-del-chips">
+          <div class="co-del-chip selected" id="delQuick" onclick="coSelectDel('quick')">
+            <div class="co-del-chip-label">⚡ Quick</div>
+            <div class="co-del-chip-sub">Same day / ASAP</div>
+          </div>
+          <div class="co-del-chip" id="delSchedule" onclick="coSelectDel('schedule')">
+            <div class="co-del-chip-label">📅 Schedule</div>
+            <div class="co-del-chip-sub">Pick date & time</div>
+          </div>
+        </div>
+        <div id="coScheduleFields" style="display:none;margin-top:10px">
+          <div class="co-field-row">
+            <div class="co-field">
+              <label>Delivery Date</label>
+              <input type="date" id="coDelDate" onchange="coUpdateSummary()" min="">
+            </div>
+            <div class="co-field">
+              <label>Time Slot</label>
+              <select id="coDelSlot" onchange="coUpdateSummary()">
+                <option value="">Select slot</option>
+                <option>Morning (9AM–12PM)</option>
+                <option>Afternoon (12PM–4PM)</option>
+                <option>Evening (4PM–8PM)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="co-info green" style="margin-top:8px">
+          🚚 <strong>0–2 km FREE.</strong> Above 2 km: Porter charge — you pay 50%, Akki's pays 50%. Confirmed on WhatsApp.
+        </div>
+      </div>
 
-    <!-- DELIVERY NOTE -->
-    <div class="co-delivery-note">
-      🚚 <strong>Delivery:</strong> First 2 km is <strong>FREE</strong>. Beyond 2 km, Porter delivery charges apply — shared <strong>50:50</strong> between you and us. Exact amount will be confirmed on WhatsApp before delivery.
-    </div>
+      <!-- 3. MH SHIPPING (Maharashtra only) -->
+      <div class="co-section" id="coSecMH" style="display:none">
+        <div class="co-sec-label">Cookie Shipping (Maharashtra)</div>
+        <div class="co-field">
+          <label>Total Cookie Weight</label>
+          <select id="coMHWeight" onchange="coUpdateSummary()">
+            <option value="0">Select weight</option>
+            <option value="60">Up to 500g — ₹60</option>
+            <option value="80">Up to 1 kg — ₹80</option>
+            <option value="120">Up to 2 kg — ₹120</option>
+            <option value="150">Up to 3 kg — ₹150</option>
+            <option value="200">Up to 5 kg — ₹200</option>
+            <option value="250">Above 5 kg — ₹250</option>
+          </select>
+        </div>
+        <div class="co-info honey">⚠️ Cakes are Pune/local only. Only cookies, loaves & desserts can be shipped across Maharashtra.</div>
+      </div>
 
-    <button class="co-send-btn" onclick="sendOrderWhatsApp()">
-      <span style="font-size:18px">💬</span> Send Order via WhatsApp
-    </button>
+      <!-- 4. CUSTOMER DETAILS -->
+      <div class="co-section">
+        <div class="co-sec-label">Your Details</div>
+        <div class="co-field-row">
+          <div class="co-field">
+            <label>Name <span style="color:#C0392B">*</span></label>
+            <input type="text" id="coName" placeholder="Full name">
+            <div class="co-err" id="err-coName">Required</div>
+          </div>
+          <div class="co-field">
+            <label>Mobile <span style="color:#C0392B">*</span></label>
+            <input type="tel" id="coPhone" placeholder="+91 9876543210">
+            <div class="co-err" id="err-coPhone">Required</div>
+          </div>
+        </div>
+        <div class="co-field">
+          <label>Delivery Address <span style="color:#C0392B">*</span></label>
+          <input type="text" id="coAddress" placeholder="Flat no, Building, Street, Area">
+          <div class="co-err" id="err-coAddress">Required</div>
+          <button type="button" class="co-loc-btn" onclick="coGetLocation()">
+            📍 Use My Current Location
+          </button>
+          <div id="coLocStatus" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
+          <input type="hidden" id="coLocationLink" value="">
+        </div>
+        <div class="co-field-row">
+          <div class="co-field">
+            <label>City <span style="color:#C0392B">*</span></label>
+            <input type="text" id="coCity" placeholder="City">
+            <div class="co-err" id="err-coCity">Required</div>
+          </div>
+          <div class="co-field">
+            <label>Pincode <span style="color:#C0392B">*</span></label>
+            <input type="text" id="coPincode" placeholder="411057" maxlength="6">
+            <div class="co-err" id="err-coPincode">Required</div>
+          </div>
+        </div>
+        <div class="co-field">
+          <label>Special Instructions</label>
+          <textarea id="coInstructions" placeholder="Allergies, notes, timing…"></textarea>
+        </div>
+      </div>
+
+      <!-- 5. ORDER SUMMARY -->
+      <div class="co-summary">
+        <div class="co-summary-title">Order Summary</div>
+        <div id="coItems"></div>
+        <hr class="co-summary-divider">
+        <div class="co-summary-row"><span>Subtotal</span><span id="coSubtotal">₹0</span></div>
+        <div class="co-summary-row"><span>Location</span><span id="coSumLoc">Pune / Local</span></div>
+        <div class="co-summary-row" id="coSumDelRow"><span>Delivery</span><span id="coSumDel">Quick (ASAP)</span></div>
+        <div class="co-summary-row" id="coSumDateRow" style="display:none"><span>Date & Time</span><span id="coSumDate">—</span></div>
+        <div class="co-summary-row"><span>Delivery Charge</span><span id="coSumCharge">—</span></div>
+        <hr class="co-summary-divider">
+        <div class="co-summary-total"><span>Total</span><span id="coTotal">₹0</span></div>
+      </div>
+
+      <button class="co-send-btn" onclick="sendOrderWhatsApp()">
+        <span style="font-size:18px">💬</span> Send Order via WhatsApp
+      </button>
+
+    </div>
   </div>
 </div>
 
@@ -724,21 +876,19 @@ function toggleCart() {
   document.getElementById('homeOverlay').classList.toggle('show');
 }
 
-// ── CHECKOUT MODAL ──
+// ── CHECKOUT STATE ──
+let coLoc = 'pune';
+let coDel = 'quick';
+
+// ── OPEN / CLOSE ──
 function openCheckoutModal() {
-  const keys  = Object.keys(homeCart);
+  const keys = Object.keys(homeCart);
   if (!keys.length) return;
-  const total = keys.reduce((s,k) => s + homeCart[k].price * homeCart[k].qty, 0);
-
-  // Fill summary
-  document.getElementById('coItems').innerHTML = keys.map(k => {
-    const i = homeCart[k];
-    return `<div class="co-summary-row"><span>${i.name} x${i.qty}</span><span>₹${(i.price*i.qty).toLocaleString('en-IN')}</span></div>`;
-  }).join('');
-  document.getElementById('coTotal').textContent = '₹' + total.toLocaleString('en-IN');
-
+  // Set min date
+  const mn = new Date(); mn.setDate(mn.getDate()+1);
+  document.getElementById('coDelDate').min = mn.toISOString().split('T')[0];
+  coUpdateSummary();
   document.getElementById('coModalWrap').classList.add('open');
-  // Close cart panel
   document.getElementById('homeCartPanel').classList.remove('open');
   document.getElementById('homeOverlay').classList.remove('show');
 }
@@ -746,49 +896,153 @@ function openCheckoutModal() {
 function closeCheckoutModal() {
   document.getElementById('coModalWrap').classList.remove('open');
 }
-
-// Close modal on background click
 document.getElementById('coModalWrap').addEventListener('click', function(e) {
   if (e.target === this) closeCheckoutModal();
 });
+
+// ── LOCATION SELECT ──
+function coSelectLoc(loc) {
+  coLoc = loc;
+  document.getElementById('locPune').classList.toggle('selected', loc==='pune');
+  document.getElementById('locMH').classList.toggle('selected',   loc==='mh');
+  document.getElementById('coSecDelType').style.display = loc==='pune' ? 'block' : 'none';
+  document.getElementById('coSecMH').style.display      = loc==='mh'   ? 'block' : 'none';
+  coUpdateSummary();
+}
+
+// ── DELIVERY TYPE ──
+function coSelectDel(type) {
+  coDel = type;
+  document.getElementById('delQuick').classList.toggle('selected',    type==='quick');
+  document.getElementById('delSchedule').classList.toggle('selected', type==='schedule');
+  document.getElementById('coScheduleFields').style.display = type==='schedule' ? 'block' : 'none';
+  coUpdateSummary();
+}
+
+// ── LIVE LOCATION ──
+function coGetLocation() {
+  const status = document.getElementById('coLocStatus');
+  const link   = document.getElementById('coLocationLink');
+  if (!navigator.geolocation) {
+    status.style.display='block'; status.style.color='#C0392B';
+    status.textContent='❌ Location not supported on this browser.'; return;
+  }
+  status.style.display='block'; status.style.color='var(--text-muted)';
+  status.textContent='⏳ Getting your location…';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat=pos.coords.latitude.toFixed(6), lng=pos.coords.longitude.toFixed(6);
+      link.value=`https://maps.google.com/?q=${lat},${lng}`;
+      status.style.color='var(--green)';
+      status.textContent=`✅ Location captured! (${lat}, ${lng})`;
+    },
+    err => {
+      status.style.color='#C0392B';
+      status.textContent = err.code===1
+        ? '❌ Permission denied. Please allow location access.'
+        : '❌ Could not get location. Type address manually.';
+    },
+    {timeout:10000}
+  );
+}
+
+// ── UPDATE SUMMARY ──
+function coUpdateSummary() {
+  const keys     = Object.keys(homeCart);
+  const subtotal = keys.reduce((s,k)=>s+homeCart[k].price*homeCart[k].qty,0);
+
+  document.getElementById('coItems').innerHTML = keys.map(k=>{
+    const i=homeCart[k];
+    return `<div class="co-summary-row"><span>${i.name} ×${i.qty}</span><span>₹${(i.price*i.qty).toLocaleString('en-IN')}</span></div>`;
+  }).join('');
+
+  document.getElementById('coSubtotal').textContent = '₹'+subtotal.toLocaleString('en-IN');
+  document.getElementById('coSumLoc').textContent   = coLoc==='pune' ? 'Pune / Local' : 'Maharashtra';
+
+  let chargeText='—', chargeNum=0;
+
+  if (coLoc==='pune') {
+    document.getElementById('coSumDelRow').style.display='flex';
+    const dtype = coDel==='quick' ? 'Quick (ASAP)' : 'Scheduled';
+    document.getElementById('coSumDel').textContent = dtype;
+    const d=document.getElementById('coDelDate').value;
+    const s=document.getElementById('coDelSlot').value;
+    if (coDel==='schedule' && d) {
+      const ds=new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+      document.getElementById('coSumDate').textContent=`${ds}${s?' · '+s:''}`;
+      document.getElementById('coSumDateRow').style.display='flex';
+    } else {
+      document.getElementById('coSumDateRow').style.display='none';
+    }
+    chargeText='0–2 km FREE · Above 2 km: Porter 50%';
+  } else {
+    document.getElementById('coSumDelRow').style.display='none';
+    document.getElementById('coSumDateRow').style.display='none';
+    const mhv=parseInt(document.getElementById('coMHWeight').value||'0');
+    if (mhv>0){ chargeNum=mhv; chargeText=`₹${mhv} (courier)`; }
+    else { chargeText='Select cookie weight above'; }
+  }
+
+  document.getElementById('coSumCharge').textContent = chargeText;
+  document.getElementById('coTotal').textContent = '₹'+(subtotal+chargeNum).toLocaleString('en-IN');
+}
 
 // ── SEND ORDER ──
 function sendOrderWhatsApp() {
   const name    = document.getElementById('coName').value.trim();
   const phone   = document.getElementById('coPhone').value.trim();
   const address = document.getElementById('coAddress').value.trim();
+  const city    = document.getElementById('coCity').value.trim();
+  const pincode = document.getElementById('coPincode').value.trim();
+  const notes   = document.getElementById('coInstructions').value.trim();
+  const locLink = document.getElementById('coLocationLink').value.trim();
 
-  // Validate
-  let ok = true;
-  [['coName','err-coName'], ['coPhone','err-coPhone'], ['coAddress','err-coAddress']].forEach(([id, errId]) => {
-    const el  = document.getElementById(id);
-    const err = document.getElementById(errId);
-    if (!el.value.trim()) { el.classList.add('err'); err.classList.add('show'); ok = false; }
-    else                   { el.classList.remove('err'); err.classList.remove('show'); }
+  let ok=true;
+  [['coName','err-coName'],['coPhone','err-coPhone'],['coAddress','err-coAddress'],
+   ['coCity','err-coCity'],['coPincode','err-coPincode']].forEach(([id,eid])=>{
+    const el=document.getElementById(id), er=document.getElementById(eid);
+    if(!el.value.trim()){el.classList.add('err');er.classList.add('show');ok=false;}
+    else{el.classList.remove('err');er.classList.remove('show');}
   });
-  if (!ok) return;
+  if(!ok) return;
 
-  const keys  = Object.keys(homeCart);
-  const total = keys.reduce((s,k) => s + homeCart[k].price * homeCart[k].qty, 0);
+  const keys     = Object.keys(homeCart);
+  const subtotal = keys.reduce((s,k)=>s+homeCart[k].price*homeCart[k].qty,0);
+  const mhCharge = coLoc==='mh' ? parseInt(document.getElementById('coMHWeight').value||'0') : 0;
+  const total    = subtotal+mhCharge;
 
-  let msg = `Hello Akkis Healthy Baking! New Order\n`;
-  msg += `━━━━━━━━━━━━━━━━━━\n\n`;
-  msg += `CUSTOMER DETAILS\n`;
-  msg += `Name: ${name}\n`;
-  msg += `Phone: ${phone}\n`;
-  msg += `Address: ${address}\n\n`;
-  msg += `ORDER ITEMS\n`;
-  keys.forEach(k => {
-    const i = homeCart[k];
-    msg += `• ${i.name} x${i.qty} — ₹${(i.price * i.qty).toLocaleString('en-IN')}\n`;
-  });
-  msg += `\nItem Total: ₹${total.toLocaleString('en-IN')}\n\n`;
-  msg += `DELIVERY NOTE\n`;
-  msg += `First 2 km is FREE. Beyond 2 km, Porter charges apply (shared 50:50). Please confirm delivery charges on WhatsApp.\n\n`;
-  msg += `━━━━━━━━━━━━━━━━━━\n`;
-  msg += `Please confirm availability. Thank you!`;
+  const delDate=document.getElementById('coDelDate').value;
+  const delSlot=document.getElementById('coDelSlot').value;
+  const dateStr=delDate ? new Date(delDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '';
 
-  window.open(`https://wa.me/917795076412?text=${encodeURIComponent(msg)}`, '_blank');
+  let msg=`Hello Akki's Healthy Baking! New Order\n`;
+  msg+=`━━━━━━━━━━━━━━━━━━\n\n`;
+  msg+=`CUSTOMER DETAILS\n`;
+  msg+=`Name: ${name}\n`;
+  msg+=`Mobile: ${phone}\n`;
+  msg+=`Address: ${address}, ${city} - ${pincode}\n`;
+  if(locLink) msg+=`Live Location: ${locLink}\n`;
+  msg+=`\nORDER ITEMS\n`;
+  keys.forEach(k=>{const i=homeCart[k];msg+=`• ${i.name} ×${i.qty} — ₹${(i.price*i.qty).toLocaleString('en-IN')}\n`;});
+  msg+=`\nDELIVERY\n`;
+  msg+=`Location: ${coLoc==='pune'?'Pune / Local':'Maharashtra'}\n`;
+  if(coLoc==='pune'){
+    msg+=`Type: ${coDel==='quick'?'Quick (ASAP)':'Scheduled'}\n`;
+    if(coDel==='schedule'&&dateStr) msg+=`Date: ${dateStr}${delSlot?' · '+delSlot:''}\n`;
+    msg+=`Delivery Charge: 0–2 km FREE. Above 2 km Porter 50:50 — to be confirmed.\n`;
+  } else {
+    const mhOpt=document.getElementById('coMHWeight').selectedOptions[0]?.text||'—';
+    msg+=`Cookie Weight: ${mhOpt}\n`;
+    msg+=`Shipping: ₹${mhCharge}\n`;
+  }
+  msg+=`\nPRICING\n`;
+  msg+=`Subtotal: ₹${subtotal.toLocaleString('en-IN')}\n`;
+  if(mhCharge) msg+=`Shipping: ₹${mhCharge}\n`;
+  msg+=`Total: ₹${total.toLocaleString('en-IN')}\n`;
+  if(notes) msg+=`\nInstructions: ${notes}\n`;
+  msg+=`\n━━━━━━━━━━━━━━━━━━\nPlease confirm availability. Thank you! 🙏`;
+
+  window.open(`https://wa.me/917795076412?text=${encodeURIComponent(msg)}`,'_blank');
   closeCheckoutModal();
 }
 
