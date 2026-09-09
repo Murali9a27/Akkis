@@ -722,7 +722,7 @@ function renderGrid(){
   if(!list.length){grid.innerHTML='<div class="no-results"><div>🔍</div><p>No products found.</p></div>';return;}
   const catMap={cake:'Cake',pastry:'Pastry',loaf:'Loaf',dessert:'Dessert',jar:'Jar & Bowl',ball:'Cake Ball'};
   grid.innerHTML=list.map(p=>{
-    const b=p.badge==='new'?'<span class="badge-new">NEW</span>':p.badge==='popular'?'<span class="badge-popular">⭐ Popular</span>':'';
+    const b=p.badge==='new'?'<span class="badge-new">NEW</span>':p.badge==='popular'?'<span class="badge-popular">⭐ Best Seller</span>':'';
     const inCart=cart[p.id]?cart[p.id].qty:0;
     return `<div class="product-card">
       <div class="card-img ${p.bg}">${p.emoji}${b}</div>
