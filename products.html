@@ -128,7 +128,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,251,244,
 .product-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;transition:transform .22s,box-shadow .22s,border-color .22s;display:flex;flex-direction:column}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(59,31,10,.12);border-color:rgba(212,120,10,.35)}
 .product-card.hidden{display:none}
-.card-img{height:160px;width:100%;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;flex-shrink:0}
+.card-img{height:160px;width:100%;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;flex-shrink:0;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-img .card-emoji-fallback{display:none}
 .card-img-bg-1{background:linear-gradient(135deg,#FEF0D4,#F5D9A8)}
 .card-img-bg-2{background:linear-gradient(135deg,#EFF7EA,#C8E6B0)}
 .card-img-bg-3{background:linear-gradient(135deg,#F5E6FF,#DEB8FF)}
@@ -724,8 +726,11 @@ function renderGrid(){
   grid.innerHTML=list.map(p=>{
     const b=p.badge==='new'?'<span class="badge-new">NEW</span>':p.badge==='popular'?'<span class="badge-popular">⭐ Best Seller</span>':'';
     const inCart=cart[p.id]?cart[p.id].qty:0;
+    const imgHtml = p.img
+      ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="card-emoji-fallback">${p.emoji}</span>`
+      : p.emoji;
     return `<div class="product-card">
-      <div class="card-img ${p.bg}">${p.emoji}${b}</div>
+      <div class="card-img ${p.bg}">${imgHtml}${b}</div>
       <div class="card-body">
         <div class="card-cat">${catMap[p.cat]||p.cat}</div>
         <div class="card-name">${p.name}</div>
