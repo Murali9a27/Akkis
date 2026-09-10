@@ -128,9 +128,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,251,244,
 .product-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;transition:transform .22s,box-shadow .22s,border-color .22s;display:flex;flex-direction:column}
 .product-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(59,31,10,.12);border-color:rgba(212,120,10,.35)}
 .product-card.hidden{display:none}
-.card-img{height:160px;width:100%;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;flex-shrink:0;overflow:hidden}
+.card-img{height:200px;width:100%;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;flex-shrink:0;overflow:hidden}
 .card-img img{width:100%;height:100%;object-fit:cover}
-.card-img .emoji-fallback{display:none;font-size:56px}
+.card-img .card-emoji-fallback{display:none}
 .card-img-bg-1{background:linear-gradient(135deg,#FEF0D4,#F5D9A8)}
 .card-img-bg-2{background:linear-gradient(135deg,#EFF7EA,#C8E6B0)}
 .card-img-bg-3{background:linear-gradient(135deg,#F5E6FF,#DEB8FF)}
@@ -674,34 +674,34 @@ footer ul a:hover{color:#F5A623}
 <script>
 /* ── DATA ── */
 const PRODUCTS = [
-  {id:1,  name:'Ragi Vanilla/Chocolate Cream Cake',  cat:'cake',    price:749, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', img:'images/product-images/Mixed_fruits_cake.png', tags:['Ragi','Whole Wheat','Chocolate','Cream'],    badge:'popular'},
-  {id:1,  name:'Ragi Dutch Truffles Cake',  cat:'cake',    price:899, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Ragi','Whole Wheat','Dark Chocolate','Jaggery'],    badge:'popular'},
-  {id:2,  name:'Chocolate Mousse Cream Cake',               cat:'cake',    price:799, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Ragi','Whole Wheat','Chocolate Mousse'],          badge:''},
-  {id:3,  name:'Pineapple Cream Cake',               cat:'cake',    price:749, weight:'500 G', emoji:'🍍', bg:'card-img-bg-2', tags:['Pineapple','Cream'],                badge:''},
-  {id:4,  name:'Strawberry Cream Cake',              cat:'cake',    price:749, weight:'500 G', emoji:'🍓', bg:'card-img-bg-4', tags:['Strawberry','Cream'],               badge:''},
-  {id:5,  name:'Blueberry Cream Cake',               cat:'cake',    price:749, weight:'500 G', emoji:'🫐', bg:'card-img-bg-5', tags:['Blueberry','Antioxidants'],         badge:''},
-  {id:6,  name:'Mixed Fruit Cream Cake',             cat:'cake',    price:1699, weight:'1 KG', emoji:'🍑', bg:'card-img-bg-2', tags:['Mixed Fruits','Seasonal'],          badge:''},
-  {id:7,  name:'Bento Dutch Truffles Cake',cat:'cake',    price:499,  weight:'300 G', emoji:'🎁', bg:'card-img-bg-1', tags:['Bento','Chocolate'],                badge:''},
-  {id:8,  name:'Lotus Biscoff Cheesecake Bento',    cat:'cake',    price:674,  weight:'300 G', emoji:'🍪', bg:'card-img-bg-3', tags:['Biscoff','Cheesecake'],             badge:'popular'},
-  {id:9,  name:'Nutella Peanut Butter Pastry',       cat:'pastry',  price:236,  weight:'200 G', emoji:'🥜', bg:'card-img-bg-1', tags:['Nutella','Peanut Butter'],          badge:'popular'},
-  {id:10, name:'Triple Chocolate Truffles Pastry',   cat:'pastry',  price:236,  weight:'150 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Triple Choco','Truffles'],          badge:''},
-  {id:11, name:'Red Velvet Orange Zest Pastry',      cat:'pastry',  price:203,  weight:'150 G', emoji:'🍰', bg:'card-img-bg-4', tags:['Red Velvet','Orange'],              badge:''},
-  {id:12, name:'Ragi Dark Chocolate Pastry',         cat:'pastry',  price:203,  weight:'150 G', emoji:'🌑', bg:'card-img-bg-1', tags:['Ragi','Dark Choco'],                badge:'popular'},
-  {id:13, name:'Milk Chocolate Truffles Pastry',     cat:'pastry',  price:203,  weight:'200 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Milk Choco','Truffles'],            badge:''},
-  {id:14, name:'Hearty Ragi Banana Walnut Loaf',     cat:'loaf',    price:404,  weight:'250 G', emoji:'🍌', bg:'card-img-bg-2', tags:['Ragi','Banana','Walnuts'],          badge:'new'},
-  {id:15, name:'Sweet Wheat Mango Pistachio Loaf',   cat:'loaf',    price:404,  weight:'250 G', emoji:'🥭', bg:'card-img-bg-1', tags:['Mango','Pistachios'],               badge:'new'},
-  {id:16, name:'Ragi Jaggery Banana Bread',          cat:'loaf',    price:404,  weight:'250 G', emoji:'🌱', bg:'card-img-bg-2', tags:['Ragi','Jaggery','Banana'],          badge:'new'},
-  {id:17, name:'Wheat Carrot Honey Cake Bread',      cat:'loaf',    price:404,  weight:'250 G', emoji:'🥕', bg:'card-img-bg-2', tags:['Carrot','Honey','Wheat'],           badge:'new'},
-  {id:18, name:'Apricot Delight',                    cat:'dessert', price:236,  weight:'120 G', emoji:'🍑', bg:'card-img-bg-1', tags:['Apricot','Natural Sweet'],          badge:''},
-  {id:19, name:'Passion Delight',                    cat:'dessert', price:236,  weight:'120 G', emoji:'🌺', bg:'card-img-bg-3', tags:['Tropical','Jaggery'],               badge:''},
-  {id:20, name:'Lotus Biscoff Cheesecake Slice',     cat:'dessert', price:236,  weight:'125 G', emoji:'🍪', bg:'card-img-bg-3', tags:['Biscoff','Cheesecake'],             badge:'popular'},
-  {id:21, name:'Hot Chocolate Brownie',              cat:'dessert', price:203,  weight:'100 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Brownie','Whole Wheat'],            badge:'popular'},
-  {id:22, name:'Roasted Almond Cake Ball',           cat:'ball',    price:236,  weight:'150 G', emoji:'🏅', bg:'card-img-bg-1', tags:['Almonds','Cake Ball'],              badge:''},
-  {id:23, name:'Hot Choco Lava',                     cat:'dessert', price:149,  weight:'100 G', emoji:'🌋', bg:'card-img-bg-1', tags:['Lava Cake','Molten'],               badge:'popular'},
-  {id:24, name:'Cakecicles',                         cat:'dessert', price:149,  weight:'100 G', emoji:'🍭', bg:'card-img-bg-3', tags:['Party Treat','Gift'],               badge:''},
-  {id:25, name:'Strawberry Cake Bowl',               cat:'jar',     price:336,  weight:'250 G', emoji:'🍓', bg:'card-img-bg-4', tags:['Strawberry','Bowl'],                badge:''},
-  {id:26, name:'Strawberry Cake Jar',                cat:'jar',     price:236,  weight:'150 G', emoji:'🍓', bg:'card-img-bg-4', tags:['Strawberry','Jar','Gift'],          badge:''},
-  {id:27, name:'Chocolate Cake Ball',                cat:'ball',    price:81,   weight:'75 G',  emoji:'🍡', bg:'card-img-bg-1', tags:['Bite-Sized','Gifting'],             badge:''},
+  {id:1,  name:'Vanilla Cream Cake',  cat:'cake',    price:749, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', img:'images/product-images/Vanilla_cream_cake.jpeg', tags:['Ragi','Whole Wheat','Chocolate','Cream'],    badge:'popular'},
+  {id:2,  name:'Ragi Dutch Truffles Cake',  cat:'cake',    price:899, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', img:'images/product-images/ragi_dutch_truffles.jpeg', tags:['Ragi','Whole Wheat','Dark Chocolate','Jaggery'],    badge:'popular'},
+  {id:3,  name:'Chocolate Mousse Cream Cake',               cat:'cake',    price:799, weight:'500 G', emoji:'🍫', bg:'card-img-bg-1', img:'images/product-images/Chocolate_mousse_cream.jpeg', tags:['Ragi','Whole Wheat','Chocolate Mousse'],          badge:''},
+  {id:4,  name:'Pineapple Cream Cake',               cat:'cake',    price:749, weight:'500 G', emoji:'🍍', bg:'card-img-bg-2', img:'images/product-images/Pineapple_cake.png', tags:['Pineapple','Cream'],                badge:''},
+  {id:5,  name:'Strawberry Cream Cake',              cat:'cake',    price:749, weight:'500 G', emoji:'🍓', bg:'card-img-bg-4', img:'images/product-images/Strawberry_cream_cake.jpeg', tags:['Strawberry','Cream'],               badge:''},
+  {id:6,  name:'Blueberry Cream Cake',               cat:'cake',    price:749, weight:'500 G', emoji:'🫐', bg:'card-img-bg-5', img:'images/product-images/Blueberry_cream_cake.jpeg', tags:['Blueberry','Antioxidants'],         badge:''},
+  {id:7,  name:'Mixed Fruit Cream Cake',             cat:'cake',    price:1699, weight:'1 KG', emoji:'🍑', bg:'card-img-bg-2', img:'images/product-images/Mixed_fruit_cake.jpeg', tags:['Mixed Fruits','Seasonal'],          badge:''},
+  {id:8,  name:'Bento Dutch Truffles Cake',cat:'cake',    price:499,  weight:'300 G', emoji:'🎁', bg:'card-img-bg-1', img:'images/product-images/Bento_dutch_truffles.jpeg', tags:['Bento','Chocolate'],                badge:''},
+  {id:9,  name:'Lotus Biscoff Cheesecake Bento',    cat:'cake',    price:674,  weight:'300 G', emoji:'🍪', bg:'card-img-bg-3', img:'images/product-images/Lotus_biscoff_bento.jpeg', tags:['Biscoff','Cheesecake'],             badge:'popular'},
+  {id:10,  name:'Snickers Pastry',       cat:'pastry',  price:236,  weight:'200 G', emoji:'🥜', bg:'card-img-bg-1', tags:['Nutella','Peanut Butter'],          badge:'popular'},
+  {id:11, name:'Triple Chocolate Truffles Pastry',   cat:'pastry',  price:236,  weight:'150 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Triple Choco','Truffles'],          badge:''},
+  {id:12, name:'Red Velvet Orange Zest Pastry',      cat:'pastry',  price:203,  weight:'150 G', emoji:'🍰', bg:'card-img-bg-4', tags:['Red Velvet','Orange'],              badge:''},
+  {id:13, name:'Ragi Dark Chocolate Pastry',         cat:'pastry',  price:203,  weight:'150 G', emoji:'🌑', bg:'card-img-bg-1', tags:['Ragi','Dark Choco'],                badge:'popular'},
+  {id:14, name:'Milk Chocolate Truffles Pastry',     cat:'pastry',  price:203,  weight:'200 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Milk Choco','Truffles'],            badge:''},
+  {id:15, name:'Rava Mawa Cake',     cat:'loaf',    price:404,  weight:'250 G', emoji:'🍌', bg:'card-img-bg-2', tags:['Wheat','Mawa','Jaggery'],          badge:'new'},
+  {id:16, name:'Sweet Wheat Mango Pistachio Loaf',   cat:'loaf',    price:404,  weight:'250 G', emoji:'🥭', bg:'card-img-bg-1', tags:['Mango','Pistachios'],               badge:'new'},
+  {id:17, name:'Ragi Jaggery Banana Bread',          cat:'loaf',    price:404,  weight:'250 G', emoji:'🌱', bg:'card-img-bg-2', tags:['Ragi','Jaggery','Banana'],          badge:'new'},
+  {id:18, name:'Wheat Carrot Honey Cake Bread',      cat:'loaf',    price:404,  weight:'250 G', emoji:'🥕', bg:'card-img-bg-2', tags:['Carrot','Honey','Wheat'],           badge:'new'},
+  {id:19, name:'Apricot Delight',                    cat:'dessert', price:236,  weight:'120 G', emoji:'🍑', bg:'card-img-bg-1', tags:['Apricot','Natural Sweet'],          badge:''},
+  {id:20, name:'Passion Delight',                    cat:'dessert', price:236,  weight:'120 G', emoji:'🌺', bg:'card-img-bg-3', tags:['Tropical','Jaggery'],               badge:''},
+  {id:21, name:'Lotus Biscoff Cheesecake Slice',     cat:'dessert', price:236,  weight:'125 G', emoji:'🍪', bg:'card-img-bg-3', tags:['Biscoff','Cheesecake'],             badge:'popular'},
+  {id:22, name:'Hot Chocolate Brownie',              cat:'dessert', price:203,  weight:'100 G', emoji:'🍫', bg:'card-img-bg-1', tags:['Brownie','Whole Wheat'],            badge:'popular'},
+  {id:23, name:'Roasted Almond Cake Ball',           cat:'ball',    price:236,  weight:'150 G', emoji:'🏅', bg:'card-img-bg-1', tags:['Almonds','Cake Ball'],              badge:''},
+  {id:24, name:'Hot Choco Lava',                     cat:'dessert', price:149,  weight:'100 G', emoji:'🌋', bg:'card-img-bg-1', tags:['Lava Cake','Molten'],               badge:'popular'},
+  {id:25, name:'Cakecicles',                         cat:'dessert', price:149,  weight:'100 G', emoji:'🍭', bg:'card-img-bg-3', tags:['Party Treat','Gift'],               badge:''},
+  {id:26, name:'Strawberry Cake Bowl',               cat:'jar',     price:336,  weight:'250 G', emoji:'🍓', bg:'card-img-bg-4', tags:['Strawberry','Bowl'],                badge:''},
+  {id:27, name:'Strawberry Cake Jar',                cat:'jar',     price:236,  weight:'150 G', emoji:'🍓', bg:'card-img-bg-4', tags:['Strawberry','Jar','Gift'],          badge:''},
+  {id:28, name:'Chocolate Cake Ball',                cat:'ball',    price:81,   weight:'75 G',  emoji:'🍡', bg:'card-img-bg-1', tags:['Bite-Sized','Gifting'],             badge:''},
 ];
 
 /* ── STATE ── */
@@ -727,7 +727,7 @@ function renderGrid(){
     const b=p.badge==='new'?'<span class="badge-new">NEW</span>':p.badge==='popular'?'<span class="badge-popular">⭐ Best Seller</span>':'';
     const inCart=cart[p.id]?cart[p.id].qty:0;
     const imgHtml = p.img
-      ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji-fallback">${p.emoji}</span>`
+      ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="card-emoji-fallback">${p.emoji}</span>`
       : p.emoji;
     return `<div class="product-card">
       <div class="card-img ${p.bg}">${imgHtml}${b}</div>
