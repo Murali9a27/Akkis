@@ -28,4 +28,42 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
+      - run: npm test
       - run: npm run build
+
+  database:
+    # Applies every migration to a fresh, throwaway local Supabase stack and runs the
+    # pgTAP suite (schema, RLS allow/deny, functions, storage) plus the auth E2E tests.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - run: npm ci
+
+      - name: Start local Supabase
+        run: npx supabase start -x realtime,edge-runtime,logflare,vector,studio,imgproxy,supavisor
+
+      - name: Migrations apply cleanly from scratch
+        run: npx supabase db reset
+
+      - name: Database lint
+        run: npx supabase db lint --level warning --fail-on warning
+
+      - name: Database tests (pgTAP)
+        run: npx supabase test db
+
+      - name: Generated types are up to date
+        run: |
+          npm run db:types
+          git diff --exit-code -- types/database.types.ts
+
+      - name: Auth end-to-end tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e

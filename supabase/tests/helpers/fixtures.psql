@@ -1,0 +1,76 @@
+-- Shared fixtures for pgTAP tests. Included with \ir from each *.test.sql file, inside that
+-- file's transaction (everything is rolled back at the end). Not a test file itself.
+
+create extension if not exists pgtap with schema extensions;
+
+create schema if not exists tests;
+grant usage on schema tests to anon, authenticated;
+
+-- Identity switching -----------------------------------------------------------------------
+-- Usage:  select tests.claims_for(tests.admin_id()); set local role authenticated;
+--         reset role;   -- back to postgres (always allowed)
+create function tests.admin_id() returns uuid language sql immutable as $$ select '11111111-1111-4111-8111-111111111111'::uuid $$;
+create function tests.user_id() returns uuid language sql immutable as $$ select '22222222-2222-4222-8222-222222222222'::uuid $$;
+
+create function tests.claims_for(user_id uuid) returns void language sql as $$
+  select set_config(
+    'request.jwt.claims',
+    json_build_object('sub', user_id, 'role', 'authenticated', 'aal', 'aal1')::text,
+    true
+  );
+$$;
+create function tests.anon_claims() returns void language sql as $$
+  select set_config('request.jwt.claims', '{"role":"anon"}', true);
+$$;
+grant execute on all functions in schema tests to anon, authenticated;
+
+-- Users: one admin, one ordinary authenticated user ---------------------------------------
+insert into auth.users (id, instance_id, aud, role, email)
+values
+  (tests.admin_id(), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin@test.local'),
+  (tests.user_id(),  '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'user@test.local');
+insert into public.admin_users (user_id) values (tests.admin_id());
+
+-- Catalog ---------------------------------------------------------------------------------
+insert into public.product_categories (id, slug, name, ships_statewide) values
+  ('a0000000-0000-4000-8000-000000000001', 'test-cakes',  'Test Cakes',  false),
+  ('a0000000-0000-4000-8000-000000000002', 'test-loaves', 'Test Loaves', true);
+
+insert into public.products (id, slug, category_id, name, price_paise, weight_label, is_active) values
+  ('b0000000-0000-4000-8000-000000000001', 'test-cake',   'a0000000-0000-4000-8000-000000000001', 'Test Cake',   74900, '500 G', true),
+  ('b0000000-0000-4000-8000-000000000002', 'test-loaf',   'a0000000-0000-4000-8000-000000000002', 'Test Loaf',   40400, '250 G', true),
+  ('b0000000-0000-4000-8000-000000000003', 'test-hidden', 'a0000000-0000-4000-8000-000000000002', 'Test Hidden', 10000, '100 G', false);
+
+insert into public.shipping_rates (id, label, max_grams, charge_paise) values
+  ('c0000000-0000-4000-8000-000000000001', 'Test slab', 777, 9900);
+
+-- Content ---------------------------------------------------------------------------------
+insert into public.gallery_items (id, title, media_type, storage_path, alt_text, is_published) values
+  ('d0000000-0000-4000-8000-000000000001', 'Published item',   'image', 'gallery/published.webp',   'Published', true),
+  ('d0000000-0000-4000-8000-000000000002', 'Unpublished item', 'image', 'gallery/unpublished.webp', 'Hidden',    false);
+
+insert into public.blog_posts (id, slug, title, excerpt, content_md, topic, status, published_at) values
+  ('e0000000-0000-4000-8000-000000000001', 'test-published', 'Published', 'x', 'Body', 'Test', 'published', now() - interval '1 day'),
+  ('e0000000-0000-4000-8000-000000000002', 'test-draft',     'Draft',     'x', 'Body', 'Test', 'draft',     null),
+  ('e0000000-0000-4000-8000-000000000003', 'test-scheduled', 'Scheduled', 'x', 'Body', 'Test', 'published', now() + interval '7 days');
+
+-- Order helper: a valid Pune quick-delivery order for the given items and mobile -------------
+create function tests.pune_order(items jsonb, mobile text) returns jsonb language sql as $$
+  select public.place_order(
+    'Test Customer', mobile, null, 'Flat 1, Test Building, Test Road', null, 'Pune', '411057', null,
+    'pune', 'quick', null, null, null, null, items
+  );
+$$;
+grant execute on function tests.pune_order(jsonb, text) to anon, authenticated;
+
+-- A minimal valid custom-cake request payload (delivery 3 days ahead in IST).
+create function tests.cake_request(overrides jsonb default '{}') returns jsonb language sql as $$
+  select jsonb_build_object(
+    'occasion', 'Birthday', 'size', 'half_kg', 'tiers', 1, 'flavour', 'Chocolate',
+    'finish', 'Cream Finish', 'theme', 'Kids & Characters', 'topper', 'Akki''s Choice',
+    'delivery_date', ((now() at time zone 'Asia/Kolkata')::date + 3)::text,
+    'delivery_slot', 'morning', 'address', 'Flat 1, Test Building, Pune 411057',
+    'customer_name', 'Test Customer', 'whatsapp', '+919800000001'
+  ) || overrides;
+$$;
+grant execute on function tests.cake_request(jsonb) to anon, authenticated;

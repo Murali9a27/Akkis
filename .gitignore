@@ -43,3 +43,8 @@ next-env.d.ts
 
 # local Claude Code tooling
 /.claude/
+
+# test artifacts
+/test-results/
+/playwright-report/
+/blob-report/

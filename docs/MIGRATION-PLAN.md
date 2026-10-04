@@ -55,6 +55,8 @@ Phases 5 and 8 can overlap: the content import can run as soon as Phase 3 is mer
 
 ## Phase 2 — Supabase setup
 
+> **Re-scoped 2026-10-04 (owner instruction):** Phase 2 now covers environment architecture, schema, auth, roles, RLS, storage, migrations, and env strategy, followed by implementation. It absorbs the original Phases 3 (database) and 4 (admin authentication) below. The design is in [`SUPABASE-ARCHITECTURE.md`](./SUPABASE-ARCHITECTURE.md) and [`DATABASE-DESIGN.md`](./DATABASE-DESIGN.md) v2, and it awaits approval before any database changes. Phases 3 and 4 below remain as reference for their verification steps.
+
 **What changes**
 - Create Supabase projects: **staging** and **production** (region closest to users: `ap-south-1` Mumbai). Disable public sign-ups. Set Site URL and redirect allow-list per environment. Configure custom SMTP (D-6).
 - `supabase init` → `supabase/config.toml`. Link local CLI to staging.
