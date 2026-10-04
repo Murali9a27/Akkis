@@ -1,0 +1,13 @@
+.main {
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.title {
+  color: #3b1f0a;
+  font-size: clamp(28px, 5vw, 44px);
+}

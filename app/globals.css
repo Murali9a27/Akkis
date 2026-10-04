@@ -1,0 +1,19 @@
+/*
+ * Minimal base styles for the Phase 1 scaffold.
+ * The full design system (tokens ported from the legacy site, fonts, components)
+ * arrives in Phase 5 — see docs/MIGRATION-PLAN.md.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #fffbf4;
+  color: #2c1810;
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}

@@ -1,0 +1,6 @@
+# Legacy static site is reference material only (see docs/MIGRATION-PLAN.md).
+legacy/
+docs/
+.next/
+node_modules/
+package-lock.json
