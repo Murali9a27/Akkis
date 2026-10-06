@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { resolveContactConfig } from "./lib/config/contact";
 import { SUPABASE_PROJECT_REFS } from "./lib/config/supabase-projects";
 import { deploymentContextFrom, resolveSupabasePublicConfig } from "./lib/supabase/target-guard";
 
@@ -17,6 +18,11 @@ function assertSupabaseEnvironment(): void {
 }
 
 assertSupabaseEnvironment();
+
+/** Business contact details come from env, never code; required on every Vercel deployment. */
+if (process.env.VERCEL_ENV) {
+  resolveContactConfig(process.env);
+}
 
 /**
  * Legacy static-site URLs. Vercel's `cleanUrls` used to serve each page at both

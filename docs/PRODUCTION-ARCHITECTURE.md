@@ -27,7 +27,7 @@ Browser ──HTTPS──▶ proxy.ts (session refresh, /admin gate)            
                  ┌──────────────────── Supabase ───────────────────┐
                  │ Postgres (RLS on every table, definer functions)│
                  │ Auth (admins only, invite-only)                 │
-                 │ Storage (public buckets: images, videos)        │
+                 │ Storage (one public bucket: media)              │
                  └─────────────────────────────────────────────────┘
                             │
 Customer ◀── wa.me deep link (order number + summary) ── WhatsApp ──▶ Owner
@@ -173,8 +173,8 @@ Exactly one factory per execution context, in `lib/supabase/`:
 
 - **Who logs in:** admins only. There are no customer accounts and public sign-up is **disabled** in Supabase Auth settings.
 - **Method:** email + password (Supabase-managed bcrypt hashing, refresh-token rotation, built-in auth rate limits). Optional TOTP MFA for admins (recommended, see decisions).
-- **Onboarding:** the owner invites the admin's email from the Supabase dashboard. The invite email links to `/auth/confirm?type=invite&next=/admin/update-password`, where the admin sets a password. The owner then adds an `admin_users` row through a reviewed SQL snippet or migration.
-- **Password reset:** `/admin/forgot-password` → `resetPasswordForEmail(email, { redirectTo: <site>/auth/confirm?next=/admin/update-password })` → `/admin/update-password` calls `updateUser({ password })`. The response is the same whether or not the email exists (no account enumeration).
+- **Onboarding:** the owner invites the admin's email from the Supabase dashboard. The invite email links to `{{ .RedirectTo }}/auth/confirm?type=invite&next=/admin/update-password` (for dashboard invites `RedirectTo` is the project's Site URL), where the admin sets a password. The owner then adds an `admin_users` row through the reviewed SQL snippet.
+- **Password reset:** `/admin/forgot-password` → `resetPasswordForEmail(email, { redirectTo: <requesting origin> })`. The email link is `{{ .RedirectTo }}/auth/confirm?token_hash=…&type=recovery&next=/admin/update-password`, so it returns to the deployment that requested it (localhost, a Preview, or production). Supabase accepts the origin only if it matches the project's Redirect URL allow-list; otherwise it falls back to the Site URL. `/admin/update-password` then calls `updateUser({ password })`. The response is the same whether or not the email exists (no account enumeration).
 - **Email delivery:** configure **custom SMTP** (Supabase's built-in sender is rate-limited and not meant for production). See decisions.
 - **Sessions:** HTTP-only cookies managed by `@supabase/ssr`. `proxy.ts` refreshes tokens on each `/admin` request. Sign-out clears the session server-side.
 - **Login hardening:** generic error message, Supabase's per-IP auth rate limits, plus a small server-side delay on failure. Login is the only public admin form.
@@ -210,7 +210,7 @@ There is no client-side `isAdmin` flag, and authorization is never inferred from
 |---|---|
 | Expected validation or business error | `ActionResult` with `fieldErrors` / `formError`, rendered inline with `aria-describedby`. Focus moves to the first invalid field |
 | Coded DB exceptions (`RATE_LIMITED`, `PRODUCT_UNAVAILABLE`, `NOT_SHIPPABLE`, `INVALID_DATE`) | Mapped to friendly copy in `lib/errors.ts` (e.g. "One item in your cart is no longer available — we've refreshed your cart") |
-| Unexpected server error | Logged with context and a correlation id. The user sees "Something went wrong — please WhatsApp us at +91 77950 76412" (the WhatsApp fallback means no lost sales) |
+| Unexpected server error | Logged with context and a correlation id. The user sees "Something went wrong — please WhatsApp us at <business WhatsApp number>" (number from `NEXT_PUBLIC_WHATSAPP_NUMBER`; the WhatsApp fallback means no lost sales) |
 | Rendering errors | `error.tsx` per segment (site and admin) and `global-error.tsx`. They use the brand styling and include a retry button and the WhatsApp fallback |
 | Missing content | `notFound()` → branded `not-found.tsx` (with links to Products and Custom Cake) |
 | Cart contains removed products | The cart re-hydrates against current product data on open and silently drops unknown ids with a notice |
@@ -243,11 +243,12 @@ There is no client-side `isAdmin` flag, and authorization is never inferred from
 ## 14. Image and media handling
 
 - **`next/image` everywhere**, with explicit `sizes`, `width`/`height` (or `fill` with an aspect-ratio container) to prevent layout shift. `priority` is set only for the LCP image (the hero poster). Formats are AVIF/WebP.
-- `next.config.ts` `images.remotePatterns` is restricted to `https://<project-ref>.supabase.co/storage/v1/object/public/**`.
+- **Storage:** exactly **one** public Supabase Storage bucket, `media` (20 MiB per file; JPEG, PNG, WebP, AVIF, MP4, WebM only — no HTML or SVG). Files are publicly readable by URL. Only admins can upload, update, delete or list objects (`storage.objects` RLS via `private.is_admin()`). Object paths: `products/<product_id>/<uuid>.<ext>`, `gallery/<uuid>.<ext>`, `blog/<post_id>/<uuid>.<ext>`. See [`DATABASE-DESIGN.md` §8](./DATABASE-DESIGN.md#8-storage).
+- `next.config.ts` `images.remotePatterns` is restricted to `https://<project-ref>.supabase.co/storage/v1/object/public/media/**`.
 - **Brand assets** (`public/brand/*`) are re-exported at sensible sizes (the logo becomes ~96 px @2x, ~10 KB, instead of 440 KB).
 - **Hero video:** transcode `VN20260809_031934.mp4` (23 MB) to ~720p H.264 MP4 plus WebM, targeting under 2 MB, with `muted playsInline loop` and a `poster`. Render it only at ≥ 900 px (it is already hidden on mobile), use `preload="none"` until visible, and show the poster only under `prefers-reduced-motion`.
 - **Gallery video:** a poster image in the grid and click-to-play in the lightbox. No autoplay in the grid.
-- **Admin uploads:** the Server Action receives a `File`. It validates MIME type (sniffed from magic bytes, not trusting the extension), enforces size ≤ 5 MB, writes to `images/<entity>/<id>/<uuid>.<ext>`, stores the **path** (not the URL) in the DB, and deletes the old object on replace. The upload form also downscales on the client before sending, to keep within the Server Action body limit.
+- **Admin uploads:** the Server Action receives a `File`. It validates MIME type (sniffed from magic bytes, not trusting the extension), enforces size ≤ 5 MB for images, writes to the `media` bucket under the paths above, stores the **path** (not the URL) in the DB, and deletes the old object on replace. The upload form also downscales on the client before sending, to keep within the Server Action body limit.
 - Every image requires alt text (enforced by the admin form schema).
 - **Cost note:** Vercel image optimisation has plan quotas. Supabase image transformations are a paid add-on and are **not** used. Original uploads are kept reasonable (≤ 2000 px).
 
@@ -290,7 +291,12 @@ There is no client-side `isAdmin` flag, and authorization is never inferred from
 
 - **Project:** the existing Vercel project, switched to the Next.js framework preset. Node 24 LTS (pinned via `engines: "24.x"`).
 - **Branches:** `main` → Production. Feature and migration branches → Preview deployments wired to the **staging** Supabase project (so previews never write to production).
-- **Env vars per environment:** Production gets the prod Supabase URL and publishable key. Preview and Development get the staging ones. `NEXT_PUBLIC_SITE_URL` is set per environment.
+- **Env vars per environment:** Production gets the prod Supabase URL and publishable key. Preview and Development get the staging ones. `NEXT_PUBLIC_SITE_URL` is **environment-specific** and must be set explicitly in each scope:
+  - Local: `NEXT_PUBLIC_SITE_URL=http://localhost:3000`
+  - Vercel Preview: `NEXT_PUBLIC_SITE_URL=<the stable Preview URL, e.g. the branch alias https://akkis-git-next-app-<team>.vercel.app>`
+  - Vercel Production: `NEXT_PUBLIC_SITE_URL=https://www.akkishealthybaking.com`
+
+  If unset it falls back to the production domain, which is wrong for Preview. Auth email links do **not** rely on it (they use the requesting origin), but metadata and any absolute links do.
 - **CI (GitHub Actions)** on every PR: `npm ci` → `tsc --noEmit` → `eslint` → unit tests → `supabase db reset && supabase test db` (Docker) → `next build`. Vercel builds independently.
 - **DB deploys:** `supabase db push` to staging on merge to the integration branch, and to production as an explicit, reviewed step before (or with) the app deploy. Migrations are backward-compatible with the currently running app version.
 - **Domains:** `www.akkishealthybaking.com` primary. The apex redirects to `www` (current canonical).
@@ -308,7 +314,7 @@ There is no client-side `isAdmin` flag, and authorization is never inferred from
 | Duplicated Supabase clients | Exactly one factory per context in `lib/supabase/` |
 | Duplicated business logic | Pricing and rules live in the DB function. Formatting and messages live in `lib/` pure functions shared by client and server |
 | Giant components and API files | ~150-line guideline, section components, one action file per domain |
-| Hardcoded credentials | None exist. Contact numbers and business info live in `lib/config/site.ts` (public information) |
+| Hardcoded credentials or contact details | None in code. Secrets live only in env vars or dashboards. The business phone, WhatsApp number and contact email are env vars too (`NEXT_PUBLIC_CONTACT_PHONE`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_CONTACT_EMAIL`), read through `lib/config/contact.ts`. They are public (shown on the site) but configured per environment. WhatsApp ordering uses `wa.me` links, so no WhatsApp API key exists. If the WhatsApp Business API is adopted later, its token is a server-only secret |
 | Insecure admin checks | Three server-side layers plus RLS. No client-side role flags |
 | `any` | `strict: true`, `noUncheckedIndexedAccess`, ESLint `@typescript-eslint/no-explicit-any: error` |
 | Disabling TS/ESLint | `next build` runs with type-check and lint enabled. No `ignoreBuildErrors` |

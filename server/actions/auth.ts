@@ -1,8 +1,10 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getAuthState } from "@/lib/auth/admin";
+import { resolveRequestOrigin } from "@/lib/auth/request-origin";
 import { safeAdminRedirect } from "@/lib/auth/safe-redirect";
 import { publicEnv } from "@/lib/env";
 import type { FormState } from "@/lib/forms";
@@ -83,9 +85,23 @@ export async function requestPasswordReset(
     };
   }
 
+  // The email link is built as {{ .RedirectTo }}/auth/confirm?… (supabase/templates), so pass
+  // this deployment's own origin. Supabase only accepts it if it matches the project's
+  // Redirect URL allow-list; otherwise it falls back to the project's Site URL.
+  const requestHeaders = await headers();
+  const origin = resolveRequestOrigin(
+    {
+      origin: requestHeaders.get("origin"),
+      host: requestHeaders.get("host"),
+      forwardedHost: requestHeaders.get("x-forwarded-host"),
+      forwardedProto: requestHeaders.get("x-forwarded-proto"),
+    },
+    publicEnv.NEXT_PUBLIC_SITE_URL,
+  );
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/admin/update-password`,
+    redirectTo: origin,
   });
   if (error) {
     // Logged, but never revealed: the response is identical whether or not the account exists.

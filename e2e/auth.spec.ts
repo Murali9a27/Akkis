@@ -146,6 +146,7 @@ test.describe("password reset", () => {
     const link = html.match(/href="([^"]*\/auth\/confirm\?[^"]+)"/)?.[1]?.replace(/&amp;/g, "&");
     expect(link, "reset link in email").toBeTruthy();
     expect(link).toContain("type=recovery");
+    expect(link!.startsWith("http://localhost:3000/auth/confirm?")).toBe(true);
 
     await page.goto(link!);
     await expect(page).toHaveURL(/\/admin\/update-password$/);
@@ -167,6 +168,33 @@ test.describe("password reset", () => {
     await expect(page).toHaveURL(/\/admin\/login\?signed-out=1/);
     await page.goto(link!);
     await expect(page).toHaveURL(/\/admin\/login\?error=link-invalid/);
+  });
+
+  test("the reset link points back to the origin that requested it", async ({ page }) => {
+    // Same server, reached through a different origin than the project's Site URL
+    // (http://localhost:3000) — like a Vercel Preview sharing the staging project.
+    const requestingOrigin = "http://127.0.0.1:3000";
+    const email = env("E2E_USER_EMAIL");
+
+    await page.goto(`${requestingOrigin}/admin/forgot-password`);
+    await page.getByLabel("Email").fill(email);
+    await page.getByRole("button", { name: "Send reset link" }).click();
+    await expect(page.getByRole("main").getByRole("status")).toContainText(
+      "If an admin account exists",
+    );
+
+    const html = await latestEmailHtml(email);
+    const link = html.match(/href="([^"]*\/auth\/confirm\?[^"]+)"/)?.[1]?.replace(/&amp;/g, "&");
+    expect(link, "reset link in email").toBeTruthy();
+    const url = new URL(link!);
+    expect(url.origin).toBe(requestingOrigin);
+    expect(url.pathname).toBe("/auth/confirm");
+    expect(url.searchParams.get("type")).toBe("recovery");
+    expect(url.searchParams.get("next")).toBe("/admin/update-password");
+
+    // Following it on that origin creates a session there and reaches the set-password page.
+    await page.goto(link!);
+    await expect(page).toHaveURL(`${requestingOrigin}/admin/update-password`);
   });
 
   test("the reset form does not reveal whether an account exists", async ({ page }) => {

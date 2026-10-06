@@ -11,6 +11,6 @@ export const SUPABASE_PROJECT_REFS: Readonly<{
   staging: string | null;
   production: string | null;
 }> = {
-  staging: null,
+  staging: "nkjnpipodcqdlxrmprxq",
   production: null,
 };

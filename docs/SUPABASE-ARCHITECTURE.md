@@ -73,12 +73,12 @@
 | Method | email + password. Min 12 chars with letters and digits (`config.toml` + Zod). Supabase bcrypt hashing, refresh-token rotation, built-in auth rate limits |
 | Sign in | `/admin/login` → Server Action `signIn`. Generic error for wrong password **and** unknown account. Users without an `admin_users` row are signed out immediately. `next` redirects are allow-listed to `/admin/*` |
 | Sign out | Server Action `signOut` (local scope) → `/admin/login?signed-out=1` |
-| Password reset | `/admin/forgot-password` → identical response whether or not the account exists. The email links to `/auth/confirm` (token hash, one-time, 1 h) → `/admin/update-password`. Recent sign-in required for password changes (`secure_password_change`). A notification email is sent after the change |
+| Password reset | `/admin/forgot-password` → identical response whether or not the account exists. The action passes the **requesting origin** as `redirectTo` (`lib/auth/request-origin.ts`: the browser's `Origin` header, else the forwarded/Host headers, else `NEXT_PUBLIC_SITE_URL`). Supabase accepts it only if it matches the project's Redirect URL allow-list, otherwise it uses the Site URL. The email links to `<that origin>/auth/confirm` (token hash, one-time, 1 h) → `/admin/update-password`, so a reset requested on a Preview returns to that Preview and one requested locally returns to localhost. Recent sign-in required for password changes (`secure_password_change`). A notification email is sent after the change |
 | Email verification | `enable_confirmations = true`. Invites confirm the address on acceptance, and email changes need confirmation on both addresses (`double_confirm_changes`) |
 | Email link handler | `app/auth/confirm/route.ts`: `verifyOtp` for `invite`, `recovery`, `email`, `email_change` only. Invalid, expired, or reused links go to `/admin/login?error=link-invalid` |
 | Sessions | HTTP-only cookies via `@supabase/ssr`. `proxy.ts` (matched on `/admin/*` and `/auth/*` only) refreshes tokens and sets `Cache-Control: private, no-store` and `X-Robots-Tag: noindex`. Public pages stay static and cookie-free |
 | Identity verification | `supabase.auth.getClaims()` (verifies the JWT signature). `getSession()` is never used for authorization |
-| Email templates | `supabase/templates/{invite,recovery,confirmation,password_changed_notification}.html` (token-hash links using `{{ .SiteURL }}`) |
+| Email templates | `supabase/templates/{invite,recovery,confirmation,password_changed_notification}.html`. Links are `{{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=…&next=…`. `RedirectTo` is the validated requesting origin, or the Site URL when none or a non-allow-listed one is supplied (e.g. dashboard invites). The password-changed notification has no link |
 | 2FA readiness (Phase 9) | `AdminSession.aal` is already read from verified claims. Phase 9 enables TOTP in Auth settings, adds enrolment/challenge pages, and makes `requireRole()` require `aal2`. RLS can additionally check `auth.jwt()->>'aal'`. No restructuring needed |
 
 > **Configuration trap found during testing:** in Supabase Auth settings, `[auth.email] enable_signup` (dashboard: *Email provider → enabled*) must stay **on**. Turning it off disables email+password sign-in completely. Public registration is controlled separately by `[auth] enable_signup` (dashboard: *Allow new users to sign up*), which must be **off**.
@@ -123,8 +123,9 @@ Business code depends only on `sendEmail()`. Swapping providers means adding an 
 |---|---|---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | no | staging | staging | production |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | no (RLS protects data) | staging | staging | production |
-| `NEXT_PUBLIC_SITE_URL` | no | `http://localhost:3000` | preview URL (optional) | `https://www.akkishealthybaking.com` |
+| `NEXT_PUBLIC_SITE_URL` (**environment-specific, set in every scope**) | no | `http://localhost:3000` | the stable Preview URL, e.g. `https://akkis-git-next-app-<team>.vercel.app` | `https://www.akkishealthybaking.com` |
 | `NEXT_PUBLIC_GA_ID` | no | — | — | `G-J376SF6XL2` |
+| `NEXT_PUBLIC_CONTACT_PHONE` / `NEXT_PUBLIC_WHATSAPP_NUMBER` / `NEXT_PUBLIC_CONTACT_EMAIL` | no (public business details, never hardcoded) | business values | business values | business values (required on Vercel, enforced at build) |
 | `EMAIL_PROVIDER` / `EMAIL_FROM` | no | optional | optional | when app emails are added |
 | `RESEND_API_KEY` | **yes** | only if testing email | staging key | production key |
 | `EMAIL_ALLOWED_RECIPIENTS` | no | your address | your address | not needed |
@@ -166,7 +167,7 @@ Never create or alter tables in the dashboard on staging or production. If an em
 |---|---|---|
 | Create project | Free org, `ap-south-1` | Pro-capable org, `ap-south-1` |
 | Record ref | `SUPABASE_PROJECT_REFS.staging` (commit) | `SUPABASE_PROJECT_REFS.production` (commit) |
-| Auth settings (dashboard) | Site URL `http://localhost:3000`. Redirect URLs `http://localhost:3000/**` + this project's Vercel preview pattern. **Allow new users to sign up: OFF.** **Email provider: ON.** Confirm email: ON. Secure password change: ON. Min password length 12, letters + digits. Templates from `supabase/templates/` | Site URL `https://www.akkishealthybaking.com`, redirect `https://www.akkishealthybaking.com/**`, same toggles and templates |
+| Auth settings (dashboard) | Site URL `http://localhost:3000` (no trailing slash). Redirect URLs `http://localhost:3000/**` + this project's **team-scoped** Vercel preview pattern `https://*-<team-slug>.vercel.app/**` (never a bare `*.vercel.app`, which anyone's deployment could match). Verified locally: an origin allow-listed with `/**` is accepted as `redirectTo`, and a non-allow-listed one falls back to the Site URL. **Allow new users to sign up: OFF.** **Email provider: ON.** Confirm email: ON. Secure password change: ON. Min password length 12, letters + digits. Templates from `supabase/templates/` | Site URL `https://www.akkishealthybaking.com`, redirect `https://www.akkishealthybaking.com/**`, same toggles and templates |
 | SMTP | Resend (staging key), sender e.g. `no-reply@<test-domain>` | Resend (production key), verified `akkishealthybaking.com` domain |
 | Schema | `supabase db push` (after approval) | `supabase db push` (separate approval at go-live) |
 | Admin | create user (dashboard) → grant via snippet | same, real admins only |

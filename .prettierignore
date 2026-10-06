@@ -4,3 +4,4 @@ docs/
 .next/
 node_modules/
 package-lock.json
+supabase/.temp/
